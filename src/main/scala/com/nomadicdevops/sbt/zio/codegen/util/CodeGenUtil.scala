@@ -27,4 +27,9 @@ object CodeGenUtil {
     case _ => "???" //TODO: implement as need be
   }
 
+
+  def makeFirstLetterLowerCase(s: String): String = {
+    Character.toLowerCase(s.charAt(0)) + s.substring(1)
+  }
+
 }
