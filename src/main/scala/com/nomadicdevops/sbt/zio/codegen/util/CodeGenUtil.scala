@@ -32,4 +32,6 @@ object CodeGenUtil {
     Character.toLowerCase(s.charAt(0)) + s.substring(1)
   }
 
+  def isGeneric(t: String): Boolean = t.contains("[") && t.contains("]")
+
 }
