@@ -1,12 +1,11 @@
 package com.nomadicdevops.sbt.zio.codegen
 
 import com.nomadicdevops.sbt.zio.codegen.readers._
-import com.nomadicdevops.sbt.zio.codegen.templates.domain.{DomainGeneratorTemplate, DomainTemplate}
-import com.nomadicdevops.sbt.zio.codegen.templates.util.UtilGeneratorsTemplate
-import com.nomadicdevops.sbt.zio.codegen.writers.{WriteGeneratedFile, WriteGeneratedImplFile, WriteTestFile}
+import com.nomadicdevops.sbt.zio.codegen.templates.domain.{DomainGeneratorTemplate, DomainTemplate, GenericDomainGeneratorTemplate}
+import com.nomadicdevops.sbt.zio.codegen.templates.enums.EnumTemplate
+import com.nomadicdevops.sbt.zio.codegen.templates.util.PrimitiveTypesGeneratorTemplate
 import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil._
-
-import scala.util.Random
+import com.nomadicdevops.sbt.zio.codegen.writers.{WriteGeneratedFile, WriteGeneratedImplFile, WriteTestFile}
 
 
 object CodeGen {
@@ -14,22 +13,10 @@ object CodeGen {
 
   private def createEnumFile(appReader: AppReader, enumReader: EnumReader)
                             (implicit config: CodeGenConfig): Unit = {
-    val contents =
-      s"""package ${appReader.packages.generated}.enums
-         |
-         |sealed trait ${enumReader.`type`}
-        ${
-        enumReader.subtypes.map(subtype =>
-          subtype.fields match {
-            case fields if fields.isEmpty => s"""case object ${subtype.`type`} extends ${enumReader.`type`}"""
-            case fields => s"""
-                              |case class ${subtype.`type`}(${
-              fields.map { case (n, v) => s"\n\t$n: $v" }.mkString(",")
-            }) extends ${enumReader.`type`}""".stripMargin
-          }
-        ).mkString("\n\n")
-      }
-       """.stripMargin
+    val contents = EnumTemplate(
+      appReader = appReader,
+      enumReader = enumReader
+    )
 
     WriteGeneratedFile(appReader, enumReader.`type`, contents, Option("enums"))
   }
@@ -401,42 +388,19 @@ ${
 
   private def createUtilGeneratorsFile(appReader: AppReader)
                                       (implicit config: CodeGenConfig): Unit = {
-    val contents = UtilGeneratorsTemplate(
-        appReader = appReader
-      )
+    val contents = PrimitiveTypesGeneratorTemplate(
+      appReader = appReader
+    )
 
     WriteTestFile(appReader, s"PrimitiveTypesGen", contents, Option("util"))
   }
 
   private def createGenericDomainGeneratorsFile(appReader: AppReader, domainReader: DomainReader)
                                                (implicit config: CodeGenConfig): Unit = {
-    val contents =
-      s"""
-         |package ${appReader.packages.generated}.domain.generators
-         |
-         |import org.scalacheck.Gen
-         |import ${appReader.packages.generated}.domain._
-         |
-         |object ${stripGenericTypes(domainReader.`type`)}Gen {
-         |  def apply${getGenericTypes(domainReader.`type`)}(
-         |  ${getGenericTypesAsList(domainReader.`type`).map(t => s"${t}Generator: Gen[$t]").mkString(",\n")}
-         |  ): Gen[${domainReader.`type`}] = for {
-    ${
-        domainReader.fields.map {
-          case (fieldName, fieldType) => s"$fieldName <- ${fieldType}Generator"
-        }.mkString("\n\t\t")
-      }
-         |  } yield {
-         |    ${domainReader.`type`}(
-    ${
-        domainReader.fields.map {
-          case (fieldName, _) => s"\t$fieldName = $fieldName"
-        }.mkString(", \n\t\t")
-      }
-         |    )
-         |  }
-         |}
-       """.stripMargin
+    val contents = GenericDomainGeneratorTemplate(
+      appReader = appReader,
+      domainReader = domainReader
+    )
 
     WriteTestFile(appReader, s"${stripGenericTypes(domainReader.`type`)}Gen", contents, Option("domain.generators"))
   }

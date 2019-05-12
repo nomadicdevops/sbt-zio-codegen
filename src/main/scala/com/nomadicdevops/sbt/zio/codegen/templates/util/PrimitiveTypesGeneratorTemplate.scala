@@ -2,7 +2,7 @@ package com.nomadicdevops.sbt.zio.codegen.templates.util
 
 import com.nomadicdevops.sbt.zio.codegen.readers.AppReader
 
-object UtilGeneratorsTemplate {
+object PrimitiveTypesGeneratorTemplate {
 
   def apply(
              appReader: AppReader
