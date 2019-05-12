@@ -13,9 +13,10 @@ object ZioCodeGenPlugin extends AutoPlugin {
   override def trigger = allRequirements
 
   object autoImport extends ZioCodeGenKeys
+
   import autoImport._
 
-  override lazy val projectSettings: Seq[Setting[_]] =Seq(
+  override lazy val projectSettings: Seq[Setting[_]] = Seq(
     // defaults
     zioCodeGenApiDir := (Compile / resourceDirectory).value, // project's src/main/resources
     zioCodeGenSrcMainScalaDir := (Compile / scalaSource).value, // project's /src/main/scala
@@ -26,52 +27,37 @@ object ZioCodeGenPlugin extends AutoPlugin {
     zioCodeGenAll := zioCodeGenAllTask.value
   )
 
-
-  private def zioCodeGenAllTask: Def.Initialize[Task[Unit]] =  Def.task {
-    val log = sLog.value
-
+  private def runWithCodeGenConfig(f: CodeGenConfig => Unit): Unit =  Def.task {
     implicit lazy val config: CodeGenConfig = CodeGenConfig(
       apiDir = zioCodeGenApiDir.value.getAbsolutePath,
       srcMainScalaDir = zioCodeGenSrcMainScalaDir.value.getAbsolutePath,
       srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath
     )
 
-    log.info(s"Generating All ZIO files...")
-    CodeGen.createGeneratedFiles(config)
-    CodeGen.createImplFiles(config)
-    log.info(s"Done. Happy Coding!")
-
-  }
-
-  private def zioCodeGenImplTask: Def.Initialize[Task[Unit]] =  Def.task {
     val log = sLog.value
-
-    implicit lazy val config: CodeGenConfig = CodeGenConfig(
-      apiDir = zioCodeGenApiDir.value.getAbsolutePath,
-      srcMainScalaDir = zioCodeGenSrcMainScalaDir.value.getAbsolutePath,
-      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath
-    )
-
-    log.info(s"Generating ZIO Impl files...")
-    CodeGen.createImplFiles(config)
-    log.info(s"Done. Happy Coding!")
-
-  }
-
-  private def zioCodeGenTask: Def.Initialize[Task[Unit]] =  Def.task {
-    val log = sLog.value
-
-    implicit lazy val config: CodeGenConfig = CodeGenConfig(
-      apiDir = zioCodeGenApiDir.value.getAbsolutePath,
-      srcMainScalaDir = zioCodeGenSrcMainScalaDir.value.getAbsolutePath,
-      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath
-    )
-
     log.info(s"Generating ZIO files...")
-    CodeGen.createGeneratedFiles(config)
+    f(config)
     log.info(s"Done. Happy Coding!")
-
   }
 
+
+  private def zioCodeGenAllTask: Def.Initialize[Task[Unit]] = Def.task {
+    runWithCodeGenConfig { config =>
+      CodeGen.createGeneratedFiles(config)
+      CodeGen.createImplFiles(config)
+    }
+  }
+
+  private def zioCodeGenImplTask: Def.Initialize[Task[Unit]] = Def.task {
+    runWithCodeGenConfig { config =>
+      CodeGen.createImplFiles(config)
+    }
+  }
+
+  private def zioCodeGenTask: Def.Initialize[Task[Unit]] = Def.task {
+    runWithCodeGenConfig { config =>
+      CodeGen.createGeneratedFiles(config)
+    }
+  }
 
 }

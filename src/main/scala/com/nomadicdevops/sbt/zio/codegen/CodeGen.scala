@@ -158,8 +158,7 @@ object CodeGen {
           contents = ServiceImplTemplate(
             appReader = appReader,
             serviceReader = serviceReader
-          )
-          ,
+          ),
           subPackage = Option("services")
         )
 
