@@ -100,8 +100,20 @@ zioCodeGenGeneratedPackageName := "whatever.you.want.your.generated.package.to.b
 zioCodeGenGeneratedImplPackageName := "whatever.you.want.your.impl.package.to.be"
 ```
 
-You may notice that default error type, as in `E` in `ZIO[R, E, A]` is `Throwable`. It is configurable through this sbt variable:
+You may notice that default error type, as in `E` in `ZIO[R, E, A]` is `Throwable`. It is configurable through this variable in `build.sbt`:
 ```$xslt
 zioCodeGenErrorType := "YourErrorType"
 ```
-Suggested way is to define `YourErrorType.json` under `enums` directory and it will be automatically picked up via import of all enums. 
+Suggested way is to define `YourErrorType.json` under `enums` directory and it will be automatically picked up via import of all enums.
+
+## Next Steps
+sbt-zio-codegen is in active development and is not yet feature complete. Next step is to be able to generate services with generic types. Contributions are welcome! 
+
+## Contact
+```$xslt
+GitHub: @nomadicdevops, @aksharp
+Twitter: @aleq
+``` 
+
+## License
+MIT
