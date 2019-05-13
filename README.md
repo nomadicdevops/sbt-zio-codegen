@@ -86,5 +86,22 @@ Create a file under `services` directory called `Greeting.json` with following c
   }
 }
 ```
-`type` is the name of the service. `interface` defines functions on the service. `inputs` are the argument list, names and types. `output` is the output type.
+`type` is the name of the service. `interface` defines functions on the service. `inputs` is the argument list, names and types. `output` is the output type.
 
+#### ZIO Code Generation
+Run code generation in sbt:
+`sbt zioCodeGen`
+
+Refresh your project (Cmd + Opt + Y in IntelliJ on Mac) and you will see generated files in your project under `com.example.zio.generated` and `com.example.zio.impl` packages in `src/main/scala` and in `com.example.zio.generated` package in `src/test/scala`.
+
+These package names are configurable in `build.sbt` through these variables:
+```$xslt
+zioCodeGenGeneratedPackageName := "whatever.you.want.your.generated.package.to.be"
+zioCodeGenGeneratedImplPackageName := "whatever.you.want.your.impl.package.to.be"
+```
+
+You may notice that default error type, as in `E` in `ZIO[R, E, A]` is `Throwable`. It is configurable through this sbt variable:
+```$xslt
+zioCodeGenErrorType := "YourErrorType"
+```
+Suggested way is to define `YourErrorType.json` under `enums` directory and it will be automatically picked up via import of all enums. 
