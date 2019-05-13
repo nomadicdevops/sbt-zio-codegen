@@ -18,7 +18,7 @@ Include sbt-zio-codegen in your project by adding the following to your `plugins
 `addSbtPlugin("com.nomadicdevops" % "sbt-zio-codegen" % "0.0.1")`
  
 #### Define API
-In your project's resources directory `src/main/resources` create following directories:
+Under your project's resources directory `src/main/resources` create following directories:
 ```$xslt
 mkdir domain
 mkdir enums
@@ -69,3 +69,22 @@ Create a file under `enums` directory called `Gender.json` with following conten
 `subtype.type` is the name of either `case object` or `case class` that extends the sealed trait. If `fields` is present, it is case class, otherwise it is case object.
 
 #### Services
+Services will be generated as ZIO environment modules. Additionally mocks, stubs, implementation and property based tests will be generated.
+
+Create a file under `services` directory called `Greeting.json` with following content:
+```$xslt
+{
+  "type": "Greeting",
+  "interface": {
+    "sayHi": {
+      "inputs": {
+        "person": "Person",
+        "message": "String"       
+      },
+      "output": "String"
+    }
+  }
+}
+```
+`type` is the name of the service. `interface` defines functions on the service. `inputs` are the argument list, names and types. `output` is the output type.
+
