@@ -9,7 +9,7 @@ import scala.io.Source
 
 package object readers {
   implicit val domainReaderCodec: JsonValueCodec[DomainReader] = JsonCodecMaker.make[DomainReader](CodecMakerConfig())
-  implicit val appReaderCodec: JsonValueCodec[AppReader] = JsonCodecMaker.make[AppReader](CodecMakerConfig())
+  implicit val appReaderCodec: JsonValueCodec[AppConfig] = JsonCodecMaker.make[AppConfig](CodecMakerConfig())
   implicit val serviceReaderCodec: JsonValueCodec[ServiceReader] = JsonCodecMaker.make[ServiceReader](CodecMakerConfig())
   implicit val enumReaderCodec: JsonValueCodec[EnumReader] = JsonCodecMaker.make[EnumReader](CodecMakerConfig())
 
@@ -23,9 +23,6 @@ package object readers {
         .map(parse[A])
     } else Nil
   }
-
-  def getAppReader(implicit config: CodeGenConfig): AppReader =
-    parse[AppReader](new File(s"${config.apiDir}/app.json"))
 
   private def parse[A](file: File)(implicit codec: JsonValueCodec[A]): A = {
     val json = Source.fromFile(file).getLines.mkString.replaceAll(" ", "")

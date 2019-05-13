@@ -1,12 +1,12 @@
 package com.nomadicdevops.sbt.zio.codegen.templates.enums
 
-import com.nomadicdevops.sbt.zio.codegen.readers.{AppReader, EnumReader}
+import com.nomadicdevops.sbt.zio.codegen.readers.{AppConfig, EnumReader}
 import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil.getGenerator
 
 object EnumGeneratorTemplate {
 
   def apply(
-             appReader: AppReader,
+             appConfig: AppConfig,
              enumReader: EnumReader
            ): String = {
     val all: String = enumReader.subtypes.map(subtype =>
@@ -26,10 +26,10 @@ object EnumGeneratorTemplate {
       case (paramName, paramValue) => s"$paramName <- ${getGenerator(paramValue)}"
     }).mkString("\n\t")
 
-    s"""package ${appReader.packages.generated}.enum.generators
+    s"""package ${appConfig.packages.generated}.enum.generators
        |
        |import org.scalacheck.Gen
-       |import com.example.generated.enums._
+       |import ${appConfig.packages.generated}.enums._
        |
        |object ${enumReader.`type`}Gen {
        |  def apply(): Gen[${enumReader.`type`}] = for {

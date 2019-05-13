@@ -1,19 +1,19 @@
 package com.nomadicdevops.sbt.zio.codegen.templates.domain
 
-import com.nomadicdevops.sbt.zio.codegen.readers.{AppReader, DomainReader}
+import com.nomadicdevops.sbt.zio.codegen.readers.{AppConfig, DomainReader}
 import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil.{getGenericTypes, getGenericTypesAsList, stripGenericTypes}
 
 object GenericDomainGeneratorTemplate {
 
   def apply(
-             appReader: AppReader,
+             appConfig: AppConfig,
              domainReader: DomainReader
            ): String = {
     s"""
-       |package ${appReader.packages.generated}.domain.generators
+       |package ${appConfig.packages.generated}.domain.generators
        |
        |import org.scalacheck.Gen
-       |import ${appReader.packages.generated}.domain._
+       |import ${appConfig.packages.generated}.domain._
        |
        |object ${stripGenericTypes(domainReader.`type`)}Gen {
        |  def apply${getGenericTypes(domainReader.`type`)}(

@@ -1,20 +1,20 @@
 package com.nomadicdevops.sbt.zio.codegen.templates.domain
 
-import com.nomadicdevops.sbt.zio.codegen.readers.{AppReader, DomainReader}
+import com.nomadicdevops.sbt.zio.codegen.readers.{AppConfig, DomainReader}
 import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil.getGenerator
 
 object DomainGeneratorTemplate {
 
   def apply(
-             appReader: AppReader,
+             appConfig: AppConfig,
              domainReader: DomainReader
            ): String = {
 
     s"""
-       |package ${appReader.packages.generated}.domain.generators
+       |package ${appConfig.packages.generated}.domain.generators
        |
          |import org.scalacheck.Gen
-       |import ${appReader.packages.generated}.domain._
+       |import ${appConfig.packages.generated}.domain._
        |
          |object ${domainReader.`type`}Gen {
        |  def apply(): Gen[${domainReader.`type`}] = for {

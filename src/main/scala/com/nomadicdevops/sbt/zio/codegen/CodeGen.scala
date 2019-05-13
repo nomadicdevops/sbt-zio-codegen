@@ -5,7 +5,7 @@ import com.nomadicdevops.sbt.zio.codegen.templates.MainTemplate
 import com.nomadicdevops.sbt.zio.codegen.templates.domain.{DomainGeneratorTemplate, DomainTemplate, GenericDomainGeneratorTemplate}
 import com.nomadicdevops.sbt.zio.codegen.templates.enums.{EnumGeneratorTemplate, EnumTemplate}
 import com.nomadicdevops.sbt.zio.codegen.templates.services.{ServiceImplTemplate, ServiceMockSpecTemplate, ServiceMockTemplate, ServiceStubTemplate, ServiceTemplate}
-import com.nomadicdevops.sbt.zio.codegen.templates.util.PrimitiveTypesGeneratorTemplate
+import com.nomadicdevops.sbt.zio.codegen.templates.util.GenHelperTemplate
 import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil._
 import com.nomadicdevops.sbt.zio.codegen.writers.{WriteGeneratedFile, WriteGeneratedImplFile, WriteTestFile}
 
@@ -13,16 +13,16 @@ object CodeGen {
 
   def createGeneratedFiles(implicit config: CodeGenConfig): Unit = {
 
-    val appReader: AppReader = getAppReader
+    val appConfig: AppConfig = config.appConfig
     val serviceReaders: List[ServiceReader] = getReaders[ServiceReader](s"${config.apiDir}/services")
     val domainReaders: List[DomainReader] = getReaders[DomainReader](s"${config.apiDir}/domain")
     val enumsReaders: List[EnumReader] = getReaders[EnumReader](s"${config.apiDir}/enums")
 
     WriteTestFile(
-      appReader = appReader,
-      scalaClass = "PrimitiveTypesGen",
-      contents = PrimitiveTypesGeneratorTemplate(
-        appReader = appReader
+      appConfig = appConfig,
+      scalaClass = "GenHelper",
+      contents = GenHelperTemplate(
+        appConfig = appConfig
       ),
       subPackage = Option("util")
     )
@@ -31,10 +31,10 @@ object CodeGen {
       .foreach(domainReader => {
 
         WriteGeneratedFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = domainReader.`type`,
           contents = DomainTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             domainReader = domainReader
           ),
           subPackage = Option("domain")
@@ -43,10 +43,10 @@ object CodeGen {
         if (isGeneric(domainReader.`type`)) {
 
           WriteTestFile(
-            appReader = appReader,
+            appConfig = appConfig,
             scalaClass = s"${stripGenericTypes(domainReader.`type`)}Gen",
             contents = GenericDomainGeneratorTemplate(
-              appReader = appReader,
+              appConfig = appConfig,
               domainReader = domainReader
             ), subPackage = Option("domain.generators")
           )
@@ -54,10 +54,10 @@ object CodeGen {
         } else {
 
           WriteTestFile(
-            appReader = appReader,
+            appConfig = appConfig,
             scalaClass = s"${domainReader.`type`}Gen",
             contents = DomainGeneratorTemplate(
-              appReader = appReader,
+              appConfig = appConfig,
               domainReader = domainReader
             ),
             subPackage = Option("domain.generators")
@@ -70,40 +70,40 @@ object CodeGen {
       .foreach(serviceReader => {
 
         WriteGeneratedFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = serviceReader.`type`,
           contents = ServiceTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             serviceReader = serviceReader
           ),
           subPackage = Option("services")
         )
 
         WriteTestFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = s"Mock${serviceReader.`type`}",
           contents = ServiceMockTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             serviceReader = serviceReader
           ),
           subPackage = Option("service.mocks")
         )
 
         WriteTestFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = s"Stub${serviceReader.`type`}",
           contents = ServiceStubTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             serviceReader = serviceReader
           ),
           subPackage = Option("service.stubs")
         )
 
         WriteTestFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = s"Mock${serviceReader.`type`}Spec",
           contents = ServiceMockSpecTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             serviceReader = serviceReader
           ),
           subPackage = Option("service.mock.specs")
@@ -114,20 +114,20 @@ object CodeGen {
       .foreach(enumReader => {
 
         WriteGeneratedFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = enumReader.`type`,
           contents = EnumTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             enumReader = enumReader
           ),
           subPackage = Option("enums")
         )
 
         WriteTestFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = s"${enumReader.`type`}Gen",
           contents = EnumGeneratorTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             enumReader = enumReader
           ),
           subPackage = Option("enum.generators")
@@ -138,14 +138,14 @@ object CodeGen {
 
   def createImplFiles(implicit config: CodeGenConfig): Unit = {
 
-    val appReader = getAppReader
+    val appConfig = config.appConfig
     val serviceReaders: List[ServiceReader] = getReaders[ServiceReader](s"${config.apiDir}/services")
 
     WriteGeneratedImplFile(
-      appReader = appReader,
+      appConfig = appConfig,
       scalaClass = "Main",
       contents = MainTemplate(
-        appReader = appReader
+        appConfig = appConfig
       )
     )
 
@@ -153,10 +153,10 @@ object CodeGen {
       .foreach(serviceReader => {
 
         WriteGeneratedImplFile(
-          appReader = appReader,
+          appConfig = appConfig,
           scalaClass = serviceReader.`type`,
           contents = ServiceImplTemplate(
-            appReader = appReader,
+            appConfig = appConfig,
             serviceReader = serviceReader
           ),
           subPackage = Option("services")

@@ -1,14 +1,14 @@
 package com.nomadicdevops.sbt.zio.codegen.templates.enums
 
-import com.nomadicdevops.sbt.zio.codegen.readers.{AppReader, EnumReader}
+import com.nomadicdevops.sbt.zio.codegen.readers.{AppConfig, EnumReader}
 
 object EnumTemplate {
 
   def apply(
-             appReader: AppReader,
+             appConfig: AppConfig,
              enumReader: EnumReader
            ): String = {
-    s"""package ${appReader.packages.generated}.enums
+    s"""package ${appConfig.packages.generated}.enums
        |
        |sealed trait ${enumReader.`type`}
         ${

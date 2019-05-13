@@ -1,12 +1,12 @@
 package com.nomadicdevops.sbt.zio.codegen.writers
 
 import com.nomadicdevops.sbt.zio.codegen.CodeGenConfig
-import com.nomadicdevops.sbt.zio.codegen.readers.AppReader
+import com.nomadicdevops.sbt.zio.codegen.readers.AppConfig
 
 object WriteGeneratedImplFile {
 
   def apply(
-             appReader: AppReader,
+             appConfig: AppConfig,
              scalaClass: String,
              contents: String,
              subPackage: Option[String] = None
@@ -14,7 +14,7 @@ object WriteGeneratedImplFile {
            (implicit
             config: CodeGenConfig
            ): Unit = {
-    val pathInitial = s"${config.srcMainScalaDir}/${appReader.packages.impl.replace(".", "/")}"
+    val pathInitial = s"${config.srcMainScalaDir}/${appConfig.packages.impl.replace(".", "/")}"
     val path = subPackage.map(sp => s"$pathInitial/$sp").getOrElse(pathInitial)
     WriteToDisk(path, scalaClass, contents)
   }

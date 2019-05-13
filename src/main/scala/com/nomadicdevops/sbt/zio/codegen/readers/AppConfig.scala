@@ -1,6 +1,6 @@
 package com.nomadicdevops.sbt.zio.codegen.readers
 
-case class AppReader(
+case class AppConfig(
                       packages: Packages,
                       error: String,
                       dependencies: List[String]

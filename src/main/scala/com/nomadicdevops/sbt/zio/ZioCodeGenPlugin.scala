@@ -3,6 +3,8 @@ package com.nomadicdevops.sbt.zio
 import sbt._
 import Keys._
 import com.nomadicdevops.sbt.zio.codegen.{CodeGen, CodeGenConfig}
+import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil._
+import com.nomadicdevops.sbt.zio.codegen.readers._
 
 object ZioCodeGenPlugin extends AutoPlugin {
 
@@ -10,30 +12,41 @@ object ZioCodeGenPlugin extends AutoPlugin {
 
   override def globalSettings: Seq[Setting[_]] = Nil
 
-  override def trigger = allRequirements
+  override def trigger: PluginTrigger = allRequirements
 
   object autoImport extends ZioCodeGenKeys
+
   import autoImport._
 
-  override lazy val projectSettings: Seq[Setting[_]] =Seq(
+  override lazy val projectSettings: Seq[Setting[_]] = Seq(
     // defaults
     zioCodeGenApiDir := (Compile / resourceDirectory).value, // project's src/main/resources
     zioCodeGenSrcMainScalaDir := (Compile / scalaSource).value, // project's /src/main/scala
     zioCodeGenSrcTestScalaDir := (Test / scalaSource).value, // project's /src/test/scala
 
+    // app config
+    zioCodeGenGeneratedPackageName := "com.example.zio.generated",
+    zioCodeGenGeneratedImplPackageName := "com.example.zio.impl",
+    zioCodeGenErrorType := "Throwable",
+
+    // not sure if needed :)
     zioCodeGen := zioCodeGenTask.value,
     zioCodeGenImpl := zioCodeGenImplTask.value,
     zioCodeGenAll := zioCodeGenAllTask.value
   )
 
 
-  private def zioCodeGenAllTask: Def.Initialize[Task[Unit]] =  Def.task {
+  private def zioCodeGenAllTask: Def.Initialize[Task[Unit]] = Def.task {
     val log = sLog.value
 
     implicit lazy val config: CodeGenConfig = CodeGenConfig(
       apiDir = zioCodeGenApiDir.value.getAbsolutePath,
       srcMainScalaDir = zioCodeGenSrcMainScalaDir.value.getAbsolutePath,
-      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath
+      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath,
+      zioCodeGenGeneratedPackageName = zioCodeGenGeneratedPackageName.value,
+      zioCodeGenGeneratedImplPackageName = zioCodeGenGeneratedImplPackageName.value,
+      zioCodeGenErrorType = zioCodeGenErrorType.value,
+      servicesDir = zioCodeGenApiDir.value.getAbsolutePath
     )
 
     log.info(s"Generating All ZIO files...")
@@ -43,13 +56,17 @@ object ZioCodeGenPlugin extends AutoPlugin {
 
   }
 
-  private def zioCodeGenImplTask: Def.Initialize[Task[Unit]] =  Def.task {
+  private def zioCodeGenImplTask: Def.Initialize[Task[Unit]] = Def.task {
     val log = sLog.value
 
     implicit lazy val config: CodeGenConfig = CodeGenConfig(
       apiDir = zioCodeGenApiDir.value.getAbsolutePath,
       srcMainScalaDir = zioCodeGenSrcMainScalaDir.value.getAbsolutePath,
-      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath
+      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath,
+      zioCodeGenGeneratedPackageName = zioCodeGenGeneratedPackageName.value,
+      zioCodeGenGeneratedImplPackageName = zioCodeGenGeneratedImplPackageName.value,
+      zioCodeGenErrorType = zioCodeGenErrorType.value,
+      servicesDir = zioCodeGenApiDir.value.getAbsolutePath
     )
 
     log.info(s"Generating ZIO Impl files...")
@@ -58,13 +75,17 @@ object ZioCodeGenPlugin extends AutoPlugin {
 
   }
 
-  private def zioCodeGenTask: Def.Initialize[Task[Unit]] =  Def.task {
+  private def zioCodeGenTask: Def.Initialize[Task[Unit]] = Def.task {
     val log = sLog.value
 
     implicit lazy val config: CodeGenConfig = CodeGenConfig(
       apiDir = zioCodeGenApiDir.value.getAbsolutePath,
       srcMainScalaDir = zioCodeGenSrcMainScalaDir.value.getAbsolutePath,
-      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath
+      srcTestScalaDir = zioCodeGenSrcTestScalaDir.value.getAbsolutePath,
+      zioCodeGenGeneratedPackageName = zioCodeGenGeneratedPackageName.value,
+      zioCodeGenGeneratedImplPackageName = zioCodeGenGeneratedImplPackageName.value,
+      zioCodeGenErrorType = zioCodeGenErrorType.value,
+      servicesDir = zioCodeGenApiDir.value.getAbsolutePath
     )
 
     log.info(s"Generating ZIO files...")
@@ -73,5 +94,14 @@ object ZioCodeGenPlugin extends AutoPlugin {
 
   }
 
+  private def getServiceNames(servicesDir: File): List[String] = {
+    getReaders[ServiceReader](
+      path = s"${servicesDir.getAbsolutePath}/services"
+    ).map(
+      serviceReader => stripGenericTypes(
+        serviceReader.`type`
+      )
+    )
+  }
 
 }

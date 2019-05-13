@@ -1,29 +1,29 @@
 package com.nomadicdevops.sbt.zio.codegen.templates
 
-import com.nomadicdevops.sbt.zio.codegen.readers.AppReader
+import com.nomadicdevops.sbt.zio.codegen.readers.AppConfig
 
 object MainTemplate {
 
   def apply(
-             appReader: AppReader
+             appConfig: AppConfig
            ): String = {
 
     s"""
-       |package ${appReader.packages.impl}
+       |package ${appConfig.packages.impl}
        |
        |import scalaz.zio.internal.PlatformLive
        |import scalaz.zio.{Runtime, ZIO}
-       |import ${appReader.packages.generated}.domain._
-       |import ${appReader.packages.generated}.services._
-       |import ${appReader.packages.generated}.enums._
-       |import ${appReader.packages.impl}.services._
+       |import ${appConfig.packages.generated}.domain._
+       |import ${appConfig.packages.generated}.services._
+       |import ${appConfig.packages.generated}.enums._
+       |import ${appConfig.packages.impl}.services._
        |
        |object Main extends App {
        |
-       |  type ProgramEnv = ${appReader.dependencies.mkString(" with ")}
-       |  val programEnv: ProgramEnv = new ${appReader.dependencies.map(d => s"Live$d").mkString(" with ")} ${if (appReader.dependencies.size == 1) "{}" else ""}
+       |  type ProgramEnv = ${appConfig.dependencies.mkString(" with ")}
+       |  val programEnv: ProgramEnv = new ${appConfig.dependencies.map(d => s"Live$d").mkString(" with ")} ${if (appConfig.dependencies.size == 1) "{}" else ""}
        |
-       |  val program: ZIO[ProgramEnv, ${appReader.error}, Unit] = ???
+       |  val program: ZIO[ProgramEnv, ${appConfig.error}, Unit] = ???
        |  /*
        |    for {
        |      _ <- ??? // TODO: implement me

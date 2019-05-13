@@ -1,12 +1,12 @@
 package com.nomadicdevops.sbt.zio.codegen.templates.services
 
-import com.nomadicdevops.sbt.zio.codegen.readers.{AppReader, ServiceInterface, ServiceReader}
+import com.nomadicdevops.sbt.zio.codegen.readers.{AppConfig, ServiceInterface, ServiceReader}
 import com.nomadicdevops.sbt.zio.codegen.util.CodeGenUtil.{accountForFunctionType, stripGenericTypes}
 
 object ServiceMockSpecTemplate {
 
   def apply(
-             appReader: AppReader,
+             appConfig: AppConfig,
              serviceReader: ServiceReader
            ): String = {
     val kvs1 = serviceReader.interface.foldLeft(List[(String, String)]()) {
@@ -26,19 +26,19 @@ object ServiceMockSpecTemplate {
     val generators = (kvs1 ::: kvs2).map(a => accountForFunctionType(stripGenericTypes(a._1))).mkString(",\n")
     val generatorsMatchingArgs = (kvs1 ::: kvs2).map(a => stripGenericTypes(a._2)).mkString(",\n")
 
-    val failureGenerators = (s"${appReader.error}Gen()" +: kvs2.map(a => stripGenericTypes(a._1))).mkString(",\n")
-    val failureGeneratorsMatchingArgs = (s"err: ${appReader.error}" +: kvs2.map(a => stripGenericTypes(a._2))).mkString(",\n")
+    val failureGenerators = (s"${appConfig.error}Gen()" +: kvs2.map(a => stripGenericTypes(a._1))).mkString(",\n")
+    val failureGeneratorsMatchingArgs = (s"err: ${appConfig.error}" +: kvs2.map(a => stripGenericTypes(a._2))).mkString(",\n")
 
     s"""
-       |package ${appReader.packages.generated}.service.mock.specs
+       |package ${appConfig.packages.generated}.service.mock.specs
        |
-         |import com.example.generated.domain._
-       |import com.example.generated.domain.generators._
-       |import com.example.generated.enum.generators._
-       |import com.example.generated.util._
-       |import com.example.generated.enums._
-       |import com.example.generated.service.mocks._
-       |import com.example.generated.services._
+         |import ${appConfig.packages.generated}.domain._
+       |import ${appConfig.packages.generated}.domain.generators._
+       |import ${appConfig.packages.generated}.enum.generators._
+       |import ${appConfig.packages.generated}.util._
+       |import ${appConfig.packages.generated}.enums._
+       |import ${appConfig.packages.generated}.service.mocks._
+       |import ${appConfig.packages.generated}.services._
        |import org.scalacheck.Prop.forAll
        |import org.scalacheck.Properties
        |import scalaz.zio.internal.PlatformLive
@@ -69,7 +69,7 @@ object ServiceMockSpecTemplate {
       serviceReader.interface.map {
         case (functionName, ServiceInterface(inputs, outputType)) =>
           s"""
-             |      val ${functionName}Program: ZIO[ProgramEnv, ${appReader.error}, $outputType] =
+             |      val ${functionName}Program: ZIO[ProgramEnv, ${appConfig.error}, $outputType] =
              |        for {
              |          res <- ${serviceReader.`type`}Provider.${functionName}(
              |          ${inputs.map { case (fieldName, _) => s"${functionName}_$fieldName" }.mkString(",\n")}
@@ -111,7 +111,7 @@ object ServiceMockSpecTemplate {
       serviceReader.interface.map {
         case (functionName, ServiceInterface(inputs, outputType)) =>
           s"""
-             |      val ${functionName}Program: ZIO[ProgramEnv, ${appReader.error}, $outputType] =
+             |      val ${functionName}Program: ZIO[ProgramEnv, ${appConfig.error}, $outputType] =
              |        for {
              |          res <- ${serviceReader.`type`}Provider.${functionName}(
              |          ${inputs.map { case (fieldName, _) => s"${functionName}_$fieldName" }.mkString(",\n")}
