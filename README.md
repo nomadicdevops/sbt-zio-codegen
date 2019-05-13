@@ -99,6 +99,11 @@ These package names are configurable in `build.sbt` through these variables:
 zioCodeGenGeneratedPackageName := "whatever.you.want.your.generated.package.to.be"
 zioCodeGenGeneratedImplPackageName := "whatever.you.want.your.impl.package.to.be"
 ```
+The reason for two separate packages is that `generated` contains files that need not be touched after they are generated and `impl` is for files that require developer to implement the interface. In order not to overwrite the implementation during re-generation of API, conditional code generation of `impl` can be controlled in `build.sbt` through:
+
+```$xslt
+zioCodeGenForImpl := false // true by default
+```   
 
 You may notice that default error type, as in `E` in `ZIO[R, E, A]` is `Throwable`. It is configurable through this variable in `build.sbt`:
 ```$xslt
