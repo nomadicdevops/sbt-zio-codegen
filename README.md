@@ -142,11 +142,14 @@ Implement the program by replacing `val program: ZIO[ProgramEnv, Throwable, Unit
 ```
 It is actually generated as an example, so you can just uncomment it in the Main file.
 
+## Run Main
+Run main in your IDE or `sbt run` You should see `Hello Alex` printed to the console
+
 ## Run tests
 Property based tests are generated for all Service Mocks. Run them and you can use them as examples to write your own property based tests. 
 
 ```$xslt
-sbt clean compile test
+sbt test
 ```
 
 
