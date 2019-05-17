@@ -13,10 +13,12 @@ object DomainGeneratorTemplate {
     s"""
        |package ${appConfig.packages.generated}.domain.generators
        |
-         |import org.scalacheck.Gen
+       |import org.scalacheck.Gen
        |import ${appConfig.packages.generated}.domain._
+       |import ${appConfig.packages.generated}.enum.generators._
+       |import ${appConfig.packages.generated}.util._
        |
-         |object ${domainReader.`type`}Gen {
+       |object ${domainReader.`type`}Gen {
        |  def apply(): Gen[${domainReader.`type`}] = for {
     ${
       domainReader.fields.map {

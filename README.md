@@ -4,9 +4,10 @@ API Driven Development with ZIO!
 Based on API definition, this sbt plugin generates ZIO boilerplate code, domain case classes, ADT enums, mocks, stubs and scalacheck generators for property based testing.    
 
 ## Requirements
+- Scala 2.12.x (to be cross published to 2.11.x and 2.13.x in the future)
 - sbt v1.x (might work with 0.13.x, but not tested)
 - zio v1.x (tested with v1.0-RC4) https://scalaz.github.io/scalaz-zio/ 
-- optionally scalacheck v1.14.0 (if you like to use property based testing)
+- scalacheck v1.14.0 (if you like to use property based testing)
 
 ## How it Works
 1) Define API
@@ -15,7 +16,14 @@ Based on API definition, this sbt plugin generates ZIO boilerplate code, domain 
 ## Getting Started
 Include sbt-zio-codegen in your project by adding the following to your `plugins.sbt` file in project directory:
 
-`addSbtPlugin("com.nomadicdevops" % "sbt-zio-codegen" % "0.0.1")`
+`addSbtPlugin("com.nomadicdevops" % "sbt-zio-codegen" % "0.0.2")`
+
+Include ZIO and Scalacheck dependencies in your project by adding the following to your `build.sbt` file:
+
+```$xslt
+libraryDependencies += "org.scalaz" %% "scalaz-zio" % "1.0-RC4"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+```
  
 #### Define API
 Under your project's resources directory `src/main/resources` create following directories:
@@ -111,13 +119,53 @@ zioCodeGenErrorType := "YourErrorType"
 ```
 Suggested way is to define `YourErrorType.json` under `enums` directory and it will be automatically picked up via import of all enums.
 
-## Next Steps
-sbt-zio-codegen is in active development and is not yet feature complete. Next step is to be able to generate services with generic types. Contributions are welcome! 
+## Implement TODOs
+Search for TODOs to see what needs to be implemented. Spoiler alert: sources under `com.example.zio.impl` package. They are service interfaces and Main. 
 
-## Contact
+1) Greeting Service. In `com.example.zio.impl.services.Greeting.scala` replace `??? //TODO: implement me` with `ZIO.succeed(s"$message ${person.name}")`
+
+2) Main class should be generated here: `com.example.zio.impl.Main.scala` or in the package you chose.
+Implement the program by replacing `val program: ZIO[ProgramEnv, Throwable, Unit] = ??? //TODO: implement me` with this:
 ```$xslt
-GitHub: @nomadicdevops, @aksharp
-Twitter: @aleq
+  val program: ZIO[ProgramEnv, Throwable, Unit] =
+    for {
+      _ <- GreetingProvider.sayHi(
+        person = Person(
+          name = "Alex",
+          age = 42,
+          gender = Male
+        ),
+        message = "Hello")
+    } yield {
+      ()
+    }
+```
+It is actually generated as an example, so you can just uncomment it in the Main file.
+
+## Run Main
+Run main in your IDE or `sbt run` You should see `Hello Alex` printed to the console
+
+## Run tests
+Property based tests are generated for all Service Mocks. Run them and you can use them as examples to write your own property based tests. 
+
+```$xslt
+sbt test
+```
+
+
+## Next Steps
+sbt-zio-codegen is in active development and is not yet feature complete. If your use case is not covered and it is not reflected on the roadmap or already opened issues, please open an issue here https://github.com/nomadicdevops/sbt-zio-codegen/issues Contributions are welcome! 
+
+## Roadmap (WIP)
+- Tests for templates
+- Generated code alignment
+- CodeGen for Generic Services (ex: `"type": "Kafka[K, V]"`)
+- Cross publish to Scala 2.11
+- Cross publish to Scala 2.13
+
+```$xslt
+GitHub: nomadicdevops 
+Twitter: @NomadicDevOps
 ``` 
 
 ## License

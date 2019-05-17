@@ -12,6 +12,8 @@ object DomainTemplate {
     s"""
        |package ${appConfig.packages.generated}.domain
        |
+       |import ${appConfig.packages.generated}.enums._
+       |
        |case class ${domainReader.`type`}(
        |${domainReader.fields.map(f => s"\t${f._1}: ${f._2}").mkString(", \n")}
        |)

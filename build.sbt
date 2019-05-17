@@ -6,7 +6,7 @@ name := "sbt-zio-codegen"
 
 organization := "com.nomadicdevops"
 
-version := "0.0.1"
+version := "0.0.2"
 
 scalaVersion := "2.12.8"
 
@@ -18,5 +18,28 @@ libraryDependencies ++= Seq(
 
   "org.scalaz" %% "scalaz-zio" % "1.0-RC4" % Test,
   "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+)
+
+
+useGpg := true
+pgpReadOnly := false
+
+// POM settings for Sonatype
+homepage := Some(url("https://github.com/nomadicdevops/sbt-zio-codegen"))
+scmInfo := Some(ScmInfo(url("https://github.com/nomadicdevops/sbt-zio-codegen"),
+"https://github.com/nomadicdevops/sbt-zio-codegen.git"))
+developers := List(Developer("NomadicDevOps",
+  "Nomadic DevOps",
+  "info@nomadicdevops.com",
+  url("https://github.com/nomadicdevops")))
+licenses += ("MIT", url("https://opensource.org/licenses/MIT"))
+publishMavenStyle := true
+
+// Add sonatype repository settings
+publishTo := Some(
+  if (isSnapshot.value)
+    Opts.resolver.sonatypeSnapshots
+  else
+    Opts.resolver.sonatypeStaging
 )
 

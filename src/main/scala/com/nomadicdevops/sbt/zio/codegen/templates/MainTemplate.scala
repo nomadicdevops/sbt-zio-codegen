@@ -23,12 +23,20 @@ object MainTemplate {
        |  type ProgramEnv = ${appConfig.dependencies.mkString(" with ")}
        |  val programEnv: ProgramEnv = new ${appConfig.dependencies.map(d => s"Live$d").mkString(" with ")} ${if (appConfig.dependencies.size == 1) "{}" else ""}
        |
-       |  val program: ZIO[ProgramEnv, ${appConfig.error}, Unit] = ???
+       |  val program: ZIO[ProgramEnv, ${appConfig.error}, Unit] = ??? //TODO: implement me
+       |  // From Getting Started example:
        |  /*
+       |  val program: ZIO[ProgramEnv, Throwable, Unit] =
        |    for {
-       |      _ <- ??? // TODO: implement me
+       |      greeting <- GreetingProvider.sayHi(
+       |        person = Person(
+       |          name = "Alex",
+       |          age = 42,
+       |          gender = Male
+       |        ),
+       |        message = "Hello")
        |    } yield {
-       |      ()
+       |      println(greeting)
        |    }
        |  */
        |

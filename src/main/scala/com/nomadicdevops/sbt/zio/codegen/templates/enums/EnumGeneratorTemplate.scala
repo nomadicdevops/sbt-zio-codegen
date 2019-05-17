@@ -30,6 +30,7 @@ object EnumGeneratorTemplate {
        |
        |import org.scalacheck.Gen
        |import ${appConfig.packages.generated}.enums._
+       |import ${appConfig.packages.generated}.util._
        |
        |object ${enumReader.`type`}Gen {
        |  def apply(): Gen[${enumReader.`type`}] = for {
