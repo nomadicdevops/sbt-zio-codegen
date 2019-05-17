@@ -154,7 +154,8 @@ sbt clean compile test
 sbt-zio-codegen is in active development and is not yet feature complete. If your use case is not covered and it is not reflected on the roadmap or already opened issues, please open an issue here https://github.com/nomadicdevops/sbt-zio-codegen/issues Contributions are welcome! 
 
 ## Roadmap (WIP)
-- Scalacheck generator for Enums
+- Tests for templates
+- Generated code alignment
 - CodeGen for Generic Services (ex: `"type": "Kafka[K, V]"`)
 - Cross publish to Scala 2.11
 - Cross publish to Scala 2.13
