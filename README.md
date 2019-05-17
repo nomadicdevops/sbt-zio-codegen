@@ -16,7 +16,7 @@ Based on API definition, this sbt plugin generates ZIO boilerplate code, domain 
 ## Getting Started
 Include sbt-zio-codegen in your project by adding the following to your `plugins.sbt` file in project directory:
 
-`addSbtPlugin("com.nomadicdevops" % "sbt-zio-codegen" % "0.0.1")`
+`addSbtPlugin("com.nomadicdevops" % "sbt-zio-codegen" % "0.0.2")`
 
 Include ZIO and Scalacheck dependencies in your project by adding the following to your `build.sbt` file:
 
