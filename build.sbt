@@ -6,7 +6,7 @@ name := "sbt-zio-codegen"
 
 organization := "com.nomadicdevops"
 
-version := "0.0.2"
+version := "0.0.3-SNAPSHOT"
 
 scalaVersion := "2.12.8"
 
@@ -23,6 +23,7 @@ libraryDependencies ++= Seq(
 
 useGpg := true
 pgpReadOnly := false
+pgpSecretRing := pgpPublicRing.value
 
 // POM settings for Sonatype
 homepage := Some(url("https://github.com/nomadicdevops/sbt-zio-codegen"))
