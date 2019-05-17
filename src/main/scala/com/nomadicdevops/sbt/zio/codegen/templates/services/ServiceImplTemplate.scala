@@ -29,7 +29,7 @@ object ServiceImplTemplate {
               case (paramName, paramType) => s"""\t\t$paramName: $paramType"""
             }.mkString(",\n")
           }
-             |\t): ZIO[Any, ${appConfig.error}, ${ioReader.output}] = ???
+             |\t): ZIO[Any, ${appConfig.error}, ${ioReader.output}] = ??? //TODO: implement me
            """.stripMargin
 
       }.mkString("\n")

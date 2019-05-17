@@ -119,6 +119,29 @@ zioCodeGenErrorType := "YourErrorType"
 ```
 Suggested way is to define `YourErrorType.json` under `enums` directory and it will be automatically picked up via import of all enums.
 
+## Implement TODOs
+Search for TODOs to see what needs to be implemented. Spoiler alert: sources under `com.example.zio.impl` package. They are service interfaces and Main. 
+
+1) Greeting Service. In `com.example.zio.impl.services.Greeting.scala` replace `??? //TODO: implement me` with `ZIO.succeed(s"$message ${person.name}")`
+
+2) Main class should be generated here: `com.example.zio.impl.Main.scala` or in the package you chose.
+Implement the program by replacing `val program: ZIO[ProgramEnv, Throwable, Unit] = ??? //TODO: implement me` with this:
+```$xslt
+  val program: ZIO[ProgramEnv, Throwable, Unit] =
+    for {
+      _ <- GreetingProvider.sayHi(
+        person = Person(
+          name = "Alex",
+          age = 42,
+          gender = Male
+        ),
+        message = "Hello")
+    } yield {
+      ()
+    }
+```
+It is actually generated as an example, so you can just uncomment it in the Main file.
+
 ## Run tests
 Property based tests are generated for all Service Mocks. Run them and you can use them as examples to write your own property based tests. 
 
@@ -131,6 +154,7 @@ sbt clean compile test
 sbt-zio-codegen is in active development and is not yet feature complete. If your use case is not covered and it is not reflected on the roadmap or already opened issues, please open an issue here https://github.com/nomadicdevops/sbt-zio-codegen/issues Contributions are welcome! 
 
 ## Roadmap (WIP)
+- Scalacheck generator for Enums
 - CodeGen for Generic Services (ex: `"type": "Kafka[K, V]"`)
 - Cross publish to Scala 2.11
 - Cross publish to Scala 2.13

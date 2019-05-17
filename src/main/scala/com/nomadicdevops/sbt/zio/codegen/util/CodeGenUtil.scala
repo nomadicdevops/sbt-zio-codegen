@@ -17,15 +17,7 @@ object CodeGenUtil {
       .split(",")
       .toList
 
-  def getGenerator(fieldType: String): String = fieldType match {
-    case "String" => "Gen.alphaStr"
-    case "Int" | "Double" | "Float" => {
-      val min: Int = new Random().nextInt(100)
-      val max: Int = min * 20
-      s"Gen.choose($min, $max)"
-    }
-    case _ => "???" //TODO: implement as need be
-  }
+  def getGenerator(fieldType: String): String = s"${fieldType}Gen()"
 
 
   def makeFirstLetterLowerCase(s: String): String = {
