@@ -4,9 +4,10 @@ API Driven Development with ZIO!
 Based on API definition, this sbt plugin generates ZIO boilerplate code, domain case classes, ADT enums, mocks, stubs and scalacheck generators for property based testing.    
 
 ## Requirements
+- Scala 2.12.x (to be cross published to 2.11.x and 2.13.x in the future)
 - sbt v1.x (might work with 0.13.x, but not tested)
 - zio v1.x (tested with v1.0-RC4) https://scalaz.github.io/scalaz-zio/ 
-- optionally scalacheck v1.14.0 (if you like to use property based testing)
+- scalacheck v1.14.0 (if you like to use property based testing)
 
 ## How it Works
 1) Define API
@@ -16,6 +17,13 @@ Based on API definition, this sbt plugin generates ZIO boilerplate code, domain 
 Include sbt-zio-codegen in your project by adding the following to your `plugins.sbt` file in project directory:
 
 `addSbtPlugin("com.nomadicdevops" % "sbt-zio-codegen" % "0.0.1")`
+
+Include ZIO and Scalacheck dependencies in your project by adding the following to your `build.sbt` file:
+
+```$xslt
+libraryDependencies += "org.scalaz" %% "scalaz-zio" % "1.0-RC4"
+libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.14.0" % Test
+```
  
 #### Define API
 Under your project's resources directory `src/main/resources` create following directories:
@@ -111,13 +119,25 @@ zioCodeGenErrorType := "YourErrorType"
 ```
 Suggested way is to define `YourErrorType.json` under `enums` directory and it will be automatically picked up via import of all enums.
 
-## Next Steps
-sbt-zio-codegen is in active development and is not yet feature complete. Next step is to be able to generate services with generic types. Contributions are welcome! 
+## Run tests
+Property based tests are generated for all Service Mocks. Run them and you can use them as examples to write your own property based tests. 
 
-## Contact
 ```$xslt
-GitHub: @nomadicdevops, @aksharp
-Twitter: @aleq
+sbt clean compile test
+```
+
+
+## Next Steps
+sbt-zio-codegen is in active development and is not yet feature complete. If your use case is not covered and it is not reflected on the roadmap or already opened issues, please open an issue here https://github.com/nomadicdevops/sbt-zio-codegen/issues Contributions are welcome! 
+
+## Roadmap (WIP)
+- CodeGen for Generic Services (ex: `"type": "Kafka[K, V]"`)
+- Cross publish to Scala 2.11
+- Cross publish to Scala 2.13
+
+```$xslt
+GitHub: nomadicdevops 
+Twitter: @NomadicDevOps
 ``` 
 
 ## License
